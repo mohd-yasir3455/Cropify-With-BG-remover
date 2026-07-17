@@ -134,7 +134,7 @@ def _select_manual_folders(raw_root: Path, edited_root: Path) -> list[Path]:
         logger.info("Edited Images is empty, so all raw folders will be cropped into MANUAL.")
         return raw_folders
 
-    edited_names = {folder.name for folder in list_product_folders(edited_root)}
+    edited_names = {folder.name.rstrip() for folder in list_product_folders(edited_root)}
     missing = [folder for folder in raw_folders if folder.name not in edited_names]
     logger.info(
         "Found %d raw folders missing from Edited Images out of %d total.",
