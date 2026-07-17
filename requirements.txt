@@ -1,0 +1,20 @@
+# Batch product-image processor -- dependencies
+# Python 3.11+ required.
+#
+# Install with:   pip install -r requirements.txt
+#
+# Notes:
+#  * rembg pulls in onnxruntime (CPU), numpy, opencv, scikit-image, etc.
+#    onnxruntime is listed explicitly to guarantee the CPU build is present.
+#  * The background-removal model (~176 MB for u2net) is downloaded the first
+#    time you run the program and cached in your home folder afterwards.
+#  * tkinter (for the folder pickers) ships with the official Python installers
+#    on Windows and macOS. On Linux install it via your package manager, e.g.
+#    `sudo apt install python3-tk`, or skip it by passing --input/--output.
+
+rembg>=2.0.50
+onnxruntime>=1.16.0
+Pillow>=10.0.0
+openpyxl>=3.1.0
+tqdm>=4.66.0
+numpy>=1.24.0
