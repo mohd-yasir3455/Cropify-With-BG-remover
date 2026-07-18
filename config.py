@@ -15,7 +15,7 @@ import os as _os
 # Any file whose extension is NOT in this set is ignored (never processed,
 # never counted). Extensions are matched case-insensitively.
 SUPPORTED_EXTENSIONS: frozenset[str] = frozenset(
-    {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif"}
+    {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif", ".heic", ".heif"}
 )
 
 # --------------------------------------------------------------------------- #

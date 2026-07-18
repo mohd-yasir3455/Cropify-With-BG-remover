@@ -22,6 +22,7 @@ from PIL import Image, ImageOps
 from tqdm import tqdm
 
 import config
+from image_io import open_image
 from image_processor import create_session, remove_background
 from utils import list_images, list_product_folders
 
@@ -46,7 +47,7 @@ class CropResult:
 
 def _load_image(path: Path) -> Image.Image:
     """Open ``path``, apply EXIF orientation, optionally cap its size."""
-    img = Image.open(path)
+    img = open_image(path)
     img.load()
     try:
         img = ImageOps.exif_transpose(img)

@@ -25,6 +25,7 @@ from typing import Any
 from PIL import Image, ImageOps
 
 import config
+from image_io import open_image
 from logger import get_logger
 
 logger = get_logger()
@@ -89,7 +90,7 @@ class ImageResult:
 
 def _load_image(path: Path) -> Image.Image:
     """Open ``path``, apply EXIF orientation, optionally cap its size."""
-    img = Image.open(path)
+    img = open_image(path)
     img.load()
     try:
         img = ImageOps.exif_transpose(img)
