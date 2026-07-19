@@ -85,6 +85,9 @@ REVIEW_MAX: int = 8
 SKIP_MIN: int = 9          # "more than 8" -> skip the folder
 TARGET_KEEP: int = 6       # how many images the user wants to keep manually
 
+# When True, every non-empty folder is processed regardless of image count.
+PROCESS_ALL_FOLDERS: bool = False
+
 # List empty / skipped folders in the Excel report too (with a comment) so the
 # sheet is a complete control panel. Set False to omit empty folders.
 LIST_EMPTY_FOLDERS: bool = True

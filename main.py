@@ -13,6 +13,7 @@ Usage:
     python main.py --input RAW --output OUT
     python main.py --input RAW --output OUT --workers 4 --model u2net
     python main.py --input RAW --output OUT --force     # ignore saved progress
+    python main.py --input RAW --output OUT --process-all
 """
 from __future__ import annotations
 
@@ -68,6 +69,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Reprocess everything, ignoring the saved progress state.",
     )
+    parser.add_argument(
+        "--process-all",
+        action="store_true",
+        help="Process every non-empty folder, ignoring the 7-8 / 9+ folder rules.",
+    )
     return parser.parse_args(argv)
 
 
@@ -115,7 +121,7 @@ def resolve_folders(args: argparse.Namespace) -> tuple[Path, Path]:
 # --------------------------------------------------------------------------- #
 # Folder decision rule                                                         #
 # --------------------------------------------------------------------------- #
-def decide_folder(count: int) -> tuple[bool, str]:
+def decide_folder(count: int, *, process_all: bool = False) -> tuple[bool, str]:
     """Return (should_process, base_comment) for a folder with ``count`` images.
 
     See ``config`` for the thresholds:
@@ -126,6 +132,8 @@ def decide_folder(count: int) -> tuple[bool, str]:
     """
     if count == 0:
         return False, config.COMMENT_EMPTY
+    if process_all or config.PROCESS_ALL_FOLDERS:
+        return True, config.COMMENT_NORMAL
     if count >= config.SKIP_MIN:
         return False, config.COMMENT_SKIP.format(count=count, max_ok=config.REVIEW_MAX)
     if config.REVIEW_MIN <= count <= config.REVIEW_MAX:
@@ -176,7 +184,7 @@ def run(input_dir: Path, output_dir: Path, args: argparse.Namespace) -> None:
     total_to_process = 0
     for folder in folders:
         images = list_images(folder)
-        should_process, comment = decide_folder(len(images))
+        should_process, comment = decide_folder(len(images), process_all=args.process_all)
         if not should_process and not config.LIST_EMPTY_FOLDERS and len(images) == 0:
             continue
         plan.append((folder, images, should_process, comment))
@@ -339,11 +347,16 @@ def _print_summary(
     total = len(plan)
     to_edit = sum(1 for _, _, should, _ in plan if should)
     skipped = total - to_edit
+    skipped_names = [folder.name for folder, _, should, _ in plan if not should]
     print()
     print(
         f"{'Interrupted' if interrupted else 'Done'}. "
         f"{total} folders scanned | {to_edit} processed | {skipped} skipped/empty."
     )
+    if skipped_names:
+        print("Skipped folders:")
+        for name in skipped_names:
+            print(f"  - {name}")
     print(f"Output : {output_dir}")
     print(f"Report : {output_dir / config.REPORT_FILENAME}")
     print(f"Log    : {output_dir / config.LOG_FILENAME}")
